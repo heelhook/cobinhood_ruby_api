@@ -58,6 +58,7 @@ end
 # API resources. WALLET
 WALLET_DEPOSIT_ADDRESSES = "/v1/wallet/deposit_addresses"
 WALLET_WITHDRAWAL_ADDRESSES = "/v1/wallet/withdrawal_addresses"
+WALLET_BALANCES = "/v1/wallet/balances"
 WALLET_LEDGER = "/v1/wallet/ledger"
 WALLET_DEPOSIT = "/v1/wallet/deposits/%{deposit_id}"
 WALLET_WITHDRAWAL = "/v1/wallet/withdrawals/%{withdrawal_id}"
@@ -314,6 +315,12 @@ class CobinhoodApi
     """
     WALLET resource methods
     """
+    def get_balances(currency=nil)
+        params = {}
+        base_url = add_filter("currency", currency, WALLET_BALANCES, params)
+        result get_auth(base_url, params:params) ,"balances"
+    end
+
     def get_ledger(currency=nil)
         params = {}
         base_url = add_filter("currency", currency, WALLET_LEDGER, params)
