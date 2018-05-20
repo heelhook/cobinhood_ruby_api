@@ -1,6 +1,5 @@
 require 'net/http'
 require 'json'
-require 'logger'
 
 LIVE_API = "https://api.cobinhood.com"
 
@@ -73,31 +72,16 @@ class CobinhoodApi
         :delete => Net::HTTP::Delete
     }
 
-    def initialize(api_key:nil,console_log:false,logfile:"cobinhood.log")
+    def initialize(api_key:nil)
         unless api_key.nil?
             @auth = {:authorization => api_key}
             @live_api = URI(LIVE_API)
             @http =  Net::HTTP.new(@live_api.host,@live_api.port)
             @http.use_ssl = true
-            #@http.set_debug_output($stdout)
         else
             @auth = nil
             @live_api = nil
             @http = nil
-        end
-
-        @loggers = []
-        if console_log
-            @loggers.push(Logger.new(STDOUT))
-        end
-        unless logfile.nil?
-            @loggers.push(Logger.new(logfile))
-        end
-    end
-
-    def log(message)
-        @loggers.each do |logger|
-            logger.info(message)
         end
     end
 
@@ -109,7 +93,6 @@ class CobinhoodApi
             request_url = request_url % params
         end
         uri = URI(LIVE_API + request_url)
-        log(method.to_s + " " + uri.to_s + " data=" + data.to_s)
 
         if auth
             request = VERB_MAP[method].new(uri.request_uri)
