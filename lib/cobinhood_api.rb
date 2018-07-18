@@ -108,7 +108,6 @@ class CobinhoodApi
             response = Net::HTTP.get(uri)
         end
         JSON.parse(response)
-
     end
 
     def get(request_url,params:nil,auth:nil)
@@ -135,14 +134,17 @@ class CobinhoodApi
     extract contents of API responce. Only cream go outside
     """
     def result(request_result,entry=nil)
-        return nil if request_result.nil?
-        return nil unless request_result.key?("success") and request_result.key?("result")
-        return request_result unless request_result["success"]
+        raise RuntimeError, 'Empty response from server' if request_result.nil?
 
-        if entry.nil?
-            request_result["result"]
+        if !request_result['success']
+            request_result = request_result['error'] if request_result['error']
+            raise RuntimeError, request_result.inspect
         else
-            request_result["result"][entry]
+            if entry.nil?
+                request_result["result"]
+            else
+                request_result["result"][entry]
+            end
         end
     end
 
